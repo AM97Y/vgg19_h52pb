@@ -1,20 +1,16 @@
 from __future__ import print_function
 
-import logging
-
+import keras.backend as K
 import tensorflow as tf
-import keras
-from keras import backend as K
 from keras import regularizers
 from keras.layers import Conv2D, MaxPooling2D, BatchNormalization
 from keras.layers import Dense, Dropout, Activation, Flatten
 from keras.models import Sequential
-from tensorflow.compat.v1 import graph_util
-import keras.backend as K
+
 K.set_learning_phase(0)
 
 
-class cifar10vgg:
+class Cifar10Vgg:
     def __init__(self):
         self.num_classes = 10
         self.weight_decay = 0.0005
@@ -137,32 +133,14 @@ def freeze_session(session, keep_var_names=None, output_names=None, clear_device
 
 
 if __name__ == '__main__':
-    # necessary !!!
+
     tf.compat.v1.disable_eager_execution()
 
     tf.compat.v1.global_variables_initializer()
-    # model = keras.models.load_model(h5_path)
-    # from keras.models import load_model
-    # model = load_model(h5_path)
 
-    model = cifar10vgg()
-
-    # model.model.save( './cifar100vgg/cifar100vgg', save_format='tf')
+    model = Cifar10Vgg()
 
     frozen_graph = freeze_session(K.get_session(),
                                   output_names=[out.op.name for out in model.model.outputs])
-    tf.compat.v1.train.write_graph(frozen_graph, "some_directory", "my_model.pb", as_text=False)
-    # save pb
-    """
-    with K.get_session() as sess:
-        output_names = [out.op.name for out in model.model.outputs]
-        print(output_names)
-        input_graph_def = sess.graph.as_graph_def()
-        for node in input_graph_def.node:
-            node.device = ""
-        graph = graph_util.remove_training_nodes(input_graph_def)
-        graph_frozen = graph_util.convert_variables_to_constants(sess, graph, output_names)
-        tf.io.write_graph(graph_frozen, './cifar100vgg/cifar100vgg.pb', as_text=False)
-        print(output_names)
-    logging.info("save pb successfully！")
-    """
+    tf.compat.v1.train.write_graph(frozen_graph, "new_cifar10vgg", "model.pb", as_text=False)
+
